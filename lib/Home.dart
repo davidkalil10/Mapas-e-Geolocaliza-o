@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -181,12 +182,39 @@ class _HomeState extends State<Home> {
     });
   }
 
+  _recuperarLocalParaEndereco() async{
+
+    List<Location> listaEnderecos = await locationFromAddress("Rua Barra Alta, 273");
+
+    print("total: " + listaEnderecos.length.toString());
+
+    if (listaEnderecos != null && listaEnderecos.length >0){
+      Location endereco = listaEnderecos[0];
+      List<Placemark> placemarks = await placemarkFromCoordinates(endereco.latitude, endereco.longitude);
+      Placemark placemarkEndereco = placemarks[0];
+      String resultado;
+
+      resultado = "\n administrativeArea " + placemarkEndereco.administrativeArea;
+      resultado += "\n subAdministrativeArea " + placemarkEndereco.subAdministrativeArea;
+      resultado += "\n locality " + placemarkEndereco.locality;
+      resultado += "\n subLocality " + placemarkEndereco.subLocality;
+      resultado += "\n thoroughfare " + placemarkEndereco.thoroughfare;
+      resultado += "\n subThoroughfare " + placemarkEndereco.subThoroughfare;
+      resultado += "\n postalCode " + placemarkEndereco.postalCode;
+      resultado += "\n country " + placemarkEndereco.country;
+      resultado += "\n isoCountryCode " + placemarkEndereco.isoCountryCode;
+
+      print("resultado: " + resultado);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     // _carregarMarcadores();
-    _recuperarLocalizacaoAtual();
-    _adicionarListenerLocalizacao();
+    //_recuperarLocalizacaoAtual();
+    //_adicionarListenerLocalizacao();
+    _recuperarLocalParaEndereco();
   }
 
   @override
